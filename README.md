@@ -9,7 +9,23 @@ Docker
 ## Como rodar o projeto
 
 ```bash
+# Remover o container caso precise
 docker compose down
+
+# Construir o container
 docker compose build
+
+# Rodar o container
 docker compose up
+```
+
+# Caso precise rodar o php ou composer
+
+```bash
+# Acessar o container
+docker compose exec app bash
+
+# Executar o comando php ou composer, exemplo:
+composer require inertiajs/inertia-laravel
+php artisan inertia:middleware
 ```
