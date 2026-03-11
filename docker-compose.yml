@@ -1,0 +1,10 @@
+services:
+
+  app:
+    build: .
+    container_name: consolidacao_portifolio_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www
+    working_dir: /var/www
