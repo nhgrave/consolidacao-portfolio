@@ -6,6 +6,12 @@ services:
     working_dir: /var/www
     volumes:
       - .:/var/www
+    command: sh -c "
+        chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache &&
+        chmod -R 775 /var/www/storage /var/www/bootstrap/cache &&
+        composer install &&
+        php-fpm
+        "
 
   nginx:
     image: nginx:latest

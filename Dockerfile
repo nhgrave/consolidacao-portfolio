@@ -15,12 +15,11 @@ RUN docker-php-ext-install zip
 # instalar composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# definir o diretório de trabalho
 WORKDIR /var/www
 
+# copiar os arquivos do projeto para o contêiner
 COPY . .
 
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 775 /var/www/storage \
-    && chmod -R 775 /var/www/bootstrap/cache
-
+# expor a porta do PHP-FPM
 EXPOSE 9000
