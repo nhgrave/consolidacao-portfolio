@@ -4,6 +4,7 @@ import { getPortfolio } from "../Services/api";
 import DashboardResume from "../Components/DashboardResume.vue";
 import DashboardAssets from "../Components/DashboardAssets.vue";
 import DashboardCompliance from "../Components/DashboardCompliance.vue";
+import PortfolioSkeleton from "../Components/PortfolioSkeleton.vue"
 
 const assets = ref([]);
 const resume = ref({});
@@ -37,6 +38,8 @@ onMounted(async () => {
             </select>
         </div>
     </div>
+
+    <PortfolioSkeleton v-if="loading" />
 
     <DashboardResume v-if="!loading" :resume="resume" class="mb-6" />
 
