@@ -1,10 +1,17 @@
 import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
+import AppLayout from './Layouts/AppLayout.vue'
 
 createInertiaApp({
   resolve: name => {
     const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })
-    return pages[`./Pages/${name}.vue`]
+    let page = pages[`./Pages/${name}.vue`]
+
+    if (page) {
+      page.default.layout ??= AppLayout
+    }
+
+    return page;
   },
 
   setup({ el, App, props, plugin }) {

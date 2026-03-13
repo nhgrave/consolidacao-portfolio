@@ -1,4 +1,4 @@
-FROM php:8.4-cli
+FROM php:8.4-fpm
 
 # instalar dependências do sistema
 RUN apt-get update && apt-get install -y \
@@ -17,5 +17,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
-CMD ["bash", "/var/www/start.sh"]
+COPY . .
+
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 775 /var/www/storage \
+    && chmod -R 775 /var/www/bootstrap/cache
+
+EXPOSE 9000

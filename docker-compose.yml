@@ -2,10 +2,28 @@ services:
 
   app:
     build: .
-    container_name: consolidacao_portifolio_app
-    ports:
-      - "8000:8000"
-      - "5173:5173"
+    container_name: laravel-app
+    working_dir: /var/www
     volumes:
       - .:/var/www
+
+  nginx:
+    image: nginx:latest
+    container_name: laravel-nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+
+  node:
+    image: node:20
+    container_name: laravel-node
     working_dir: /var/www
+    volumes:
+      - .:/var/www
+    ports:
+      - "5173:5173"
+    command: sh -c "npm ci && npm run dev"

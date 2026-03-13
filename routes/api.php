@@ -1,19 +1,13 @@
 <?php
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\PortfolioController;
+use App\Http\Controllers\External\AlphaController;
+use App\Http\Controllers\External\BetaController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+// Internal API routes
+Route::get('/v1/portfolio/{client_id}', [PortfolioController::class, 'show']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// External API routes
+Route::get('/external/alpha/investments', [AlphaController::class, 'investments']);
+Route::get('/external/beta/portfolio/{id}', [BetaController::class, 'portfolio']);

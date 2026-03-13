@@ -19,7 +19,7 @@ docker compose build
 docker compose up
 ```
 
-# Caso precise rodar o php ou composer
+## Caso precise rodar o php ou composer
 
 ```bash
 # Acessar o container
@@ -29,3 +29,16 @@ docker compose exec app bash
 composer require inertiajs/inertia-laravel
 php artisan inertia:middleware
 ```
+
+## Stack
+
+- Laravel 10.50
+- PHP 8.4
+- Inertia.js
+- Vue.js 3
+
+## Arquitetura
+
+- Controllers
+- Services
+- DTOs
