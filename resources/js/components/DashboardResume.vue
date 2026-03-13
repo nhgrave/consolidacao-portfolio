@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import { formatCurrency } from '../Utils/Currency';
+import { formatCurrency } from '../utils/Currency';
 
 const props = defineProps({
     resume: {
@@ -20,10 +20,14 @@ const netValue = computed(() => {
             <p class="font-bold text-xl">Resumo Consolidado</p>
         </div>
         <div class="flex">
-            <div class="p-4 w-full">
+            <div class="p-4 flex flex-col gap-1 w-full">
                 <p class="text-gray-600 text-sm">Valor Bruto Total</p>
                 <p class="font-bold text-xl">{{ formatCurrency(resume.total) }}</p>
-                <!-- TODO: adicionar as corretoras e valores -->
+                <div class="flex flex-col">
+                    <span v-for="broker in Object.keys(resume.total_by_brokers)" :key="broker" class="text-gray-400 text-xs">
+                        {{ broker }}: {{ formatCurrency(resume.total_by_brokers[broker]) }}
+                    </span>
+                </div>
             </div>
             <div class="p-4 w-full">
                 <p class="text-gray-600 text-sm">Imposto Retido (IR)</p>

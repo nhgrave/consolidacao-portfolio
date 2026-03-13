@@ -1,6 +1,6 @@
 <script setup>
-import AssetTypeBadge from "../Components/AssetTypeBadge.vue";
-import { formatCurrency } from "../Utils/Currency";
+import AssetTypeBadge from "../components/AssetTypeBadge.vue";
+import { formatCurrency } from "../utils/Currency";
 
 defineProps({
     assets: {

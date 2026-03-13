@@ -17,17 +17,17 @@ class PortfolioService
             'client_id' => $clientId,
         ]);
 
-        $baseUrl = config('services.api_base.url');
+        $baseUrl = config('services.external_api.url');
 
         $responses = Http::pool(function ($pool) use ($clientId, $baseUrl) {
             return [
                 $pool->as('alpha')->get(
-                    "{$baseUrl}/external/alpha/investments",
+                    "{$baseUrl}/api/external/alpha/investments",
                     ['client_id' => $clientId]
                 ),
 
                 $pool->as('beta')->get(
-                    "{$baseUrl}/external/beta/portfolio/{$clientId}"
+                    "{$baseUrl}/api/external/beta/portfolio/{$clientId}"
                 ),
             ];
         });
@@ -78,6 +78,11 @@ class PortfolioService
             }
         }
 
+        $total_by_brokers = collect($portfolio)
+            ->groupBy('broker')
+            ->map(fn ($assets) => $assets->sum('value'))
+            ->toArray();
+
         $total = array_sum(array_map(fn ($asset) => $asset->value, $portfolio));
         $tax = array_sum(array_map(fn ($asset) => $asset->tax, $portfolio));
 
@@ -85,6 +90,7 @@ class PortfolioService
             client_id: $clientId,
             portfolio: $portfolio,
             resume: [
+                'total_by_brokers' => $total_by_brokers,
                 'total' => $total,
                 'tax' => $tax,
                 'fee' => ($total - $tax) * 0.005,
