@@ -1,5 +1,6 @@
 <script setup>
 import AssetTypeBadge from "../Components/AssetTypeBadge.vue";
+import { formatCurrency } from "../Utils/Currency";
 
 defineProps({
     assets: {
@@ -32,7 +33,7 @@ defineProps({
                         <AssetTypeBadge :asset-type="asset.type" />
                     </td>
                     <td class="text-left py-2 px-4 text-gray-600 text-sm">{{ asset.broker }}</td>
-                    <td class="text-right py-2 px-4 text-gray-600 text-sm">{{ asset.value }}</td>
+                    <td class="text-right py-2 px-4 text-gray-600 text-sm">{{ formatCurrency(asset.value) }}</td>
                 </tr>
             </tbody>
         </table>
