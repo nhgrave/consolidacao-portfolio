@@ -17,6 +17,7 @@ class BetaController extends Controller
                 'error' => 'Internal server error'
             ], 500);
         }
+
         return response()->json([
             'portfolio' => [
                 ['asset' => 'Ações', 'value' => 30000.00],

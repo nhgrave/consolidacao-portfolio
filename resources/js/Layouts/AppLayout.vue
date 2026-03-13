@@ -1,18 +1,14 @@
 <script setup>
+import AppHeader from '../Components/AppHeader.vue';
+
 </script>
 
 <template>
   <div>
+    <AppHeader />
 
-    <header>
-      <h2>Clube do Valor</h2>
-
-      <h3>Consultor: João Silva</h3>
-    </header>
-
-    <main>
+    <main class="px-4">
       <slot />
     </main>
-
   </div>
 </template>
