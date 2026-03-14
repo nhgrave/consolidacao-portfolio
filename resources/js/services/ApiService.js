@@ -2,6 +2,7 @@ const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const getHeaders = () => {
   return {
+    Accept: 'application/json',
     'Content-Type': 'application/json',
   };
 }
@@ -33,7 +34,10 @@ const request = (endpoint, options) => {
 
 class ApiService {
   get(endpoint) {
-    return request(endpoint);
+    return request(endpoint, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
   }
 
   post(endpoint, data) {

@@ -8,7 +8,7 @@ class AssetDTO
         public string $asset,
         public string $type,
         public string $broker,
+        public float $value,
         public float $tax,
-        public float $value
     ) {}
 }

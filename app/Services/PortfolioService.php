@@ -6,106 +6,91 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
-use App\DTO\AssetDTO;
+use App\Brokers\AlphaBroker;
+use App\Brokers\BetaBroker;
 use App\DTO\PortfolioDTO;
+use App\DTO\WarningDTO;
 
 class PortfolioService
 {
+    private float $fee = 0.005;
+
     public function getPortfolio($clientId): PortfolioDTO
     {
         Log::info("Fetching portfolio", [
             'client_id' => $clientId,
         ]);
 
-        $baseUrl = config('services.external_api.url');
+        $brokers = [
+            new AlphaBroker(),
+            new BetaBroker(),
+        ];
 
-        $responses = Http::pool(function ($pool) use ($clientId, $baseUrl) {
-            return [
-                $pool->as('alpha')->get(
-                    "{$baseUrl}/api/external/alpha/investments",
-                    ['client_id' => $clientId]
-                ),
+        $responses = Http::pool(function ($pool) use ($brokers, $clientId) {
+            $requests = [];
 
-                $pool->as('beta')->get(
-                    "{$baseUrl}/api/external/beta/portfolio/{$clientId}"
-                ),
-            ];
+            foreach ($brokers as $broker) {
+                $requests[$broker->key()] = $broker->request($pool, $clientId);
+            }
+
+            return $requests;
         });
 
-        foreach ($responses as $key => $response) {
-            if ($response instanceof \Throwable) {
+        $portfolio = collect();
+        $warnings = [];
+
+        foreach ($brokers as $broker) {
+            $response = $responses[$broker->key()];
+
+            if ($response instanceof Response && $response->successful()) {
+                $portfolio = $portfolio->merge($broker->map($response));
+
+            } else if ($response instanceof \Throwable) {
                 Log::error("API request failed", [
-                    'service' => $key,
+                    'service' => $broker->key(),
                     'message' => $response->getMessage(),
                     'trace' => $response->getTraceAsString(),
                 ]);
-            }
 
-            if ($response instanceof Response && $response->failed()) {
+                $warnings[] = new WarningDTO(
+                    code: 'BROKER_UNAVAILABLE',
+                    broker: $broker->key()
+                );
+            } else if ($response instanceof Response && $response->failed()) {
                 Log::error("API returned error", [
-                    'service' => $key,
+                    'service' => $broker->key(),
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
-            }
-        }
 
-        $portfolio = [];
-        $alphaResponse = $responses['alpha'];
-        $betaResponse = $responses['beta'];
-
-        // ativos da Alpha
-        if ($alphaResponse instanceof Response && $alphaResponse->successful()) {
-            foreach ($alphaResponse->json('investments') as $investment) {
-                $portfolio[] = $this->mapToAssetDTO(
-                    investment: $investment,
-                    broker: 'Alpha',
-                    type: 'fixed',
-                    tax: 0.20
+                $warnings[] = new WarningDTO(
+                    code: 'BROKER_ERROR',
+                    broker: $broker->key()
                 );
             }
         }
 
-        // ativos da Beta
-        if ($betaResponse instanceof Response && $betaResponse->successful()) {
-            foreach ($betaResponse->json('portfolio') as $investment) {
-                $portfolio[] = $this->mapToAssetDTO(
-                    investment: $investment,
-                    broker: 'Beta',
-                    type: 'variable',
-                    tax: 0.15
-                );
-            }
-        }
+        Log::info("Portfolio fetched", [
+            'portfolio' => $portfolio,
+        ]);
 
+        $total = collect($portfolio)->sum('value');
         $total_by_brokers = collect($portfolio)
             ->groupBy('broker')
             ->map(fn ($assets) => $assets->sum('value'))
             ->toArray();
-
-        $total = array_sum(array_map(fn ($asset) => $asset->value, $portfolio));
-        $tax = array_sum(array_map(fn ($asset) => $asset->tax, $portfolio));
+        $tax = collect($portfolio)->sum('tax');
 
         return new PortfolioDTO(
             client_id: $clientId,
-            portfolio: $portfolio,
+            portfolio: $portfolio->toArray(),
             resume: [
-                'total_by_brokers' => $total_by_brokers,
                 'total' => $total,
+                'total_by_brokers' => $total_by_brokers,
                 'tax' => $tax,
-                'fee' => ($total - $tax) * 0.005,
+                'fee' => ($total - $tax) * $this->fee,
             ],
-        );
-    }
-
-    private function mapToAssetDTO(array $investment, string $broker, string $type, float $tax): AssetDTO
-    {
-        return new AssetDTO(
-            asset: $investment['asset'],
-            type: $type,
-            broker: $broker,
-            tax: $investment['value'] * $tax,
-            value: $investment['value']
+            warnings: $warnings
         );
     }
 }

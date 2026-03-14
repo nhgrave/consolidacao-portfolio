@@ -9,7 +9,6 @@ class BetaController extends Controller
 {
     public function portfolio($id)
     {
-
         sleep(2);
 
         if (rand(1,10) === 1) {

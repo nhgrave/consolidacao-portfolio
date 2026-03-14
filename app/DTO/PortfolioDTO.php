@@ -8,5 +8,6 @@ class PortfolioDTO
         public int $client_id,
         public array $portfolio,
         public array $resume,
+        public array $warnings,
     ) {}
 }
