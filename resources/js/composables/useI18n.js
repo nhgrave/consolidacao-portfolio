@@ -9,6 +9,14 @@ export function useI18n() {
                 warnings: {
                     BROKER_ERROR: 'Ativos da corretora {{broker}} não puderam ser carregados.',
                 }
+            },
+            report: {
+                status: {
+                    pending: 'Relatório Pendente',
+                    processing: 'Processando Relatório',
+                    completed: 'Relatório Concluído',
+                    failed: 'Relatório Falhou',
+                }
             }
         },
     });

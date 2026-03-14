@@ -70,10 +70,6 @@ class PortfolioService
             }
         }
 
-        Log::info("Portfolio fetched", [
-            'portfolio' => $portfolio,
-        ]);
-
         $total = collect($portfolio)->sum('value');
         $total_by_brokers = collect($portfolio)
             ->groupBy('broker')
