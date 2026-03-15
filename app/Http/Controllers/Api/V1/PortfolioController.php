@@ -15,17 +15,17 @@ class PortfolioController extends Controller
         return response()->json($portfolio);
     }
 
-    public function report(int $clientId, PortfolioReportService $service)
+    public function generateReport(int $clientId, PortfolioReportService $service)
     {
         $report = $service->generateReport($clientId);
 
         return response()->json($report);
     }
 
-    public function reportStatus(int $clientId, PortfolioReportService $service)
+    public function report(int $clientId, PortfolioReportService $service)
     {
-        $status = $service->getReportStatus($clientId);
+        $report = $service->getReport($clientId);
 
-        return response()->json(['status' => $status]);
+        return response()->json($report);
     }
 }

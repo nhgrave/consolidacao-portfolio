@@ -30,7 +30,7 @@ class PortfolioReportService
         ];
     }
 
-    public function getReportStatus($clientId): string
+    public function getReport($clientId): ?Report
     {
         $report = Report::where('client_id', $clientId)->latest()->first();
 
@@ -38,6 +38,6 @@ class PortfolioReportService
             return null;
         }
 
-        return $report->status;
+        return $report;
     }
 }
