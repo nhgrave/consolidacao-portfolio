@@ -9,6 +9,9 @@ Docker
 ## Como rodar o projeto
 
 ```bash
+# Copiar o .env.example
+cp .env.example .env
+
 # Remover o container caso precise
 docker compose down
 
