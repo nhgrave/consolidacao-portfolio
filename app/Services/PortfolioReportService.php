@@ -26,7 +26,7 @@ class PortfolioReportService
 
         return [
             'report_id' => $report->id,
-            'status' => 'pending'
+            'status' => $report->status,
         ];
     }
 

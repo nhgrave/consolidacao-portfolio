@@ -45,5 +45,10 @@ php artisan inertia:middleware
 
 - Laravel 10.50
 - PHP 8.4
-- Inertia.js
+- Sqlite
+- Redis
+- Nginx
+- Inertia.js 2.3
 - Vue.js 3
+- Tailwind 4
+- Vite

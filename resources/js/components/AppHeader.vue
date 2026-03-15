@@ -4,9 +4,11 @@ import UserHeader from './UserHeader.vue';
 </script>
 
 <template>
-    <header class="flex justify-between items-center bg-white shadow p-4">
-        <h2 class="font-bold text-xl">Clube do Valor</h2>
+    <header class="bg-white shadow">
+        <div class="flex justify-between items-center p-4 max-w-300 mx-auto">
+            <h2 class="font-bold text-xl">Clube do Valor</h2>
 
-        <UserHeader />
+            <UserHeader />
+        </div>
     </header>
 </template>

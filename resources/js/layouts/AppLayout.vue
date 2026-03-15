@@ -7,7 +7,7 @@ import AppHeader from '../components/AppHeader.vue';
   <div>
     <AppHeader />
 
-    <main class="px-4">
+    <main class="px-4 max-w-300 mx-auto py-6">
       <slot />
     </main>
   </div>
