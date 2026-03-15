@@ -19,6 +19,14 @@ docker compose build
 docker compose up
 ```
 
+## Para rodar os testes
+
+Para rodar os testes o container precisa estar rodando
+
+```bash
+docker compose exec app php artisan test
+```
+
 ## Caso precise rodar o php ou composer
 
 ```bash
@@ -36,9 +44,3 @@ php artisan inertia:middleware
 - PHP 8.4
 - Inertia.js
 - Vue.js 3
-
-## Arquitetura
-
-- Controllers
-- Services
-- DTOs

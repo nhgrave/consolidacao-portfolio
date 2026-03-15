@@ -10,6 +10,7 @@ use App\Brokers\AlphaBroker;
 use App\Brokers\BetaBroker;
 use App\DTO\PortfolioDTO;
 use App\DTO\WarningDTO;
+use App\Services\Calculators\FeeCalculator;
 
 class PortfolioService
 {
@@ -77,6 +78,8 @@ class PortfolioService
             ->toArray();
         $tax = collect($portfolio)->sum('tax');
 
+        $fee = FeeCalculator::calculate($total - $tax);
+
         return new PortfolioDTO(
             client_id: $clientId,
             portfolio: $portfolio->toArray(),
@@ -84,7 +87,7 @@ class PortfolioService
                 'total' => $total,
                 'total_by_brokers' => $total_by_brokers,
                 'tax' => $tax,
-                'fee' => ($total - $tax) * $this->fee,
+                'fee' => $fee,
             ],
             warnings: $warnings
         );

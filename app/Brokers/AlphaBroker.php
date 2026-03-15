@@ -5,6 +5,7 @@ namespace App\Brokers;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Client\Response;
 use App\DTO\AssetDTO;
+use App\Services\Calculators\TaxCalculator;
 
 class AlphaBroker
 {
@@ -37,12 +38,16 @@ class AlphaBroker
 
     public function map(Response $response): array
     {
-        return collect($response->json('investments'))->map(fn ($asset) => new AssetDTO(
-            asset: $asset['asset'],
-            type: $this->type(),
-            broker: $this->name(),
-            value: $asset['value'],
-            tax: $asset['value'] * $this->tax(),
-        ))->toArray();
+        return collect($response->json('investments'))->map(function ($asset) {
+            $tax = TaxCalculator::calculate($this->type(), $asset['value']);
+
+            return new AssetDTO(
+                asset: $asset['asset'],
+                type: $this->type(),
+                broker: $this->name(),
+                value: $asset['value'],
+                tax: $tax,
+            );
+        })->toArray();
     }
 }
